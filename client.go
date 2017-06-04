@@ -1,7 +1,6 @@
 package gofair
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 	"crypto/tls"
@@ -9,12 +8,14 @@ import (
 	"strings"
 	"io/ioutil"
 	"errors"
+	"encoding/json"
 )
 
 
 // betfair api endpoints
 const (
-	identity_url = "https://identitysso-api.betfair.com/api/"
+	login_url = "https://identitysso-api.betfair.com/api/"
+	identity_url = "https://identitysso.betfair.com/api/"
 	api_url = "https://api.betfair.com/exchange/"
 	navigation_url = "https://api.betfair.com/exchange/betting/rest/v1/en/navigation/menu.json"
 )
@@ -31,27 +32,85 @@ type Config struct {
 }
 
 
+// holds session data
+type session struct {
+	SessionToken 	string
+	LoginTime	time.Time
+}
+
+
 // main client object
 type Client struct {
 	config		*Config
-	httpClient	*http.Client
 	session		*session
-	loginTime	time.Time
-
-	Auth		*Auth
 }
 
 
-func (a *Client) PrintSession() {
-	fmt.Println(a.session)
-	//fmt.Println(a.Auth.session)
+type loginResult struct {
+	LoginStatus	string	`json:"loginStatus"`
+	SessionToken	string 	`json:"sessionToken"`
 }
 
 
-// holds session data
-type session struct {
-	SessionToken string
-	LoginStatus  string
+type logoutResult struct {
+	Token	string `json:"token"`
+	Product	string `json:"product"`
+	Status	string `json:"status"`
+	Error	string `json:"error"`
+}
+
+
+func (c *Client) Login() (loginResult) {
+	// build body
+	body := strings.NewReader("username=" + c.config.Username + "&password=" + c.config.Password)
+
+	// make request
+	resp, err := loginRequest(c, login_url, "certlogin",  body)
+	check(err)
+
+	var result loginResult
+
+	// parse json
+	err = json.Unmarshal(resp, &result)
+	check(err)
+
+	c.session.SessionToken = result.SessionToken
+	c.session.LoginTime = time.Now().UTC()
+	return result
+}
+
+
+func (c *Client) KeepAlive() (logoutResult) {
+	// make request
+	resp, err := logoutRequest(c, identity_url, "keepAlive")
+	check(err)
+
+	var result logoutResult
+
+	// parse json
+	err = json.Unmarshal(resp, &result)
+	check(err)
+
+	c.session.SessionToken = result.Token
+	c.session.LoginTime = time.Now().UTC()
+	return result
+}
+
+
+func (c *Client) Logout() (logoutResult) {
+	// make request
+	resp, err := logoutRequest(c, identity_url, "logout")
+	check(err)
+
+	var result logoutResult
+
+	// parse json
+	err = json.Unmarshal(resp, &result)
+	check(err)
+
+	c.session.SessionToken = ""
+	c.session.LoginTime = time.Time{}
+	return result
 }
 
 
@@ -64,27 +123,6 @@ func NewClient(config *Config)(*Client, error){
 
 	// set config
 	c.config = config
-
-	// HTTP client
-	cert, err := tls.LoadX509KeyPair(c.config.CertFile, c.config.KeyFile)
-	if err != nil {
-		return c, err
-	}
-	ssl := &tls.Config {
-		Certificates: []tls.Certificate{cert},
-		InsecureSkipVerify: true,
-	}
-
-	c.httpClient = &http.Client {
-		Transport: &http.Transport {
-			Dial: func(network, addr string) (net.Conn, error) {
-				return net.DialTimeout(network, addr, time.Duration(time.Second*3))
-			},
-			TLSClientConfig: ssl,
-		},
-	}
-
-	c.Auth = &Auth{config, c.session}
 
 	return c, nil
 }
@@ -102,16 +140,15 @@ func check(e error){
 }
 
 
-func loginRequest(endpoint string, method string, body *strings.Reader) ([]byte, error){
+func loginRequest(c *Client, endpoint string, method string, body *strings.Reader) ([]byte, error){
 	// build url
 	url := createUrl(endpoint, method)
 
-	// load certs
-	cert, err := tls.LoadX509KeyPair("/gocerts/client-2048.crt", "/gocerts/client-2048.key")
+	// HTTP client
+	cert, err := tls.LoadX509KeyPair(c.config.CertFile, c.config.KeyFile)
 	if err != nil {
-		fmt.Println("Error loading certificate. ", err)
+		return nil, err
 	}
-
 	ssl := &tls.Config {
 		Certificates: []tls.Certificate{cert},
 		InsecureSkipVerify: true,
@@ -132,6 +169,39 @@ func loginRequest(endpoint string, method string, body *strings.Reader) ([]byte,
 	}
 	req.Header.Set("X-Application", "1")
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	resp, err := client.Do(req)
+
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != 200 {
+		return nil, errors.New(resp.Status)
+	}
+	defer resp.Body.Close()
+	data, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+
+func logoutRequest(c *Client, endpoint string, method string) ([]byte, error){
+	// build url
+	url := createUrl(endpoint, method)
+
+	req, err := http.NewRequest("POST", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Accept","application/json")
+	req.Header.Set("X-Application", c.config.AppKey)
+	req.Header.Set("X-Authentication", c.session.SessionToken)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	client := &http.Client {}
 
 	resp, err := client.Do(req)
 
