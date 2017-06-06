@@ -10,7 +10,8 @@ import (
 const (
 	login_url = "https://identitysso-api.betfair.com/api/"
 	identity_url = "https://identitysso.betfair.com/api/"
-	api_url = "https://api.betfair.com/exchange/"
+	api_betting_url = "https://api.betfair.com/exchange/betting/rest/v1.0/"
+	api_account_url = "https://api.betfair.com/exchange/account/rest/v1.0/"
 	navigation_url = "https://api.betfair.com/exchange/betting/rest/v1/en/navigation/menu.json"
 )
 

@@ -24,4 +24,9 @@ if err != nil {
 fmt.Println(trading.Login())
 fmt.Println(trading.KeepAlive())
 fmt.Println(trading.Logout())
+
+filter := new(gofair.MarketFilter)
+event_types, err := trading.Betting.ListEventTypes(filter)
+
+fmt.Println(event_types)
 ```
