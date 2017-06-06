@@ -21,8 +21,11 @@ func (c *Client) Login() (loginResult, error) {
 	// build body
 	body := strings.NewReader("username=" + c.config.Username + "&password=" + c.config.Password)
 
+	// build url
+	url := createUrl(login_url, "certlogin")
+
 	// make request
-	resp, err := loginRequest(c, login_url, "certlogin",  body)
+	resp, err := loginRequest(c, url,  body)
 	if err != nil {
 		return *new(loginResult), err
 	}
@@ -41,9 +44,7 @@ func (c *Client) Login() (loginResult, error) {
 }
 
 
-func loginRequest(c *Client, endpoint string, method string, body *strings.Reader) ([]byte, error){
-	// build url
-	url := createUrl(endpoint, method)
+func loginRequest(c *Client, url string, body *strings.Reader) ([]byte, error){
 
 	// HTTP client
 	ssl := &tls.Config {

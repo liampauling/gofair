@@ -18,8 +18,11 @@ type logoutResult struct {
 
 
 func (c *Client) Logout() (logoutResult, error) {
+	// build url
+	url := createUrl(identity_url, "logout")
+
 	// make request
-	resp, err := logoutRequest(c, identity_url, "logout")
+	resp, err := logoutRequest(c, url)
 	if err != nil {
 		return *new(logoutResult), err
 	}
@@ -38,9 +41,7 @@ func (c *Client) Logout() (logoutResult, error) {
 }
 
 
-func logoutRequest(c *Client, endpoint string, method string) ([]byte, error){
-	// build url
-	url := createUrl(endpoint, method)
+func logoutRequest(c *Client, url string) ([]byte, error){
 
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {

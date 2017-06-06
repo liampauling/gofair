@@ -38,6 +38,13 @@ type Client struct {
 	config		*Config
 	session		*session
 	certificates	*tls.Certificate
+	Betting		*Betting
+}
+
+
+// betting object
+type Betting struct {
+	Client		*Client
 }
 
 
@@ -58,5 +65,24 @@ func NewClient(config *Config)(*Client, error){
 	// set config
 	c.config = config
 
+	// create betting
+	c.Betting = new(Betting)
+	c.Betting.Client = c
+
 	return c, nil
+}
+
+
+func (c *Client) SessionExpired() (bool){
+	// returns True if client not logged in or expired
+	// betfair requires keep alive every 4hrs (20mins ITA)
+	if c.session.SessionToken == "" {
+		return true
+	}
+	duration := time.Since(c.session.LoginTime)
+	if duration.Minutes() > 200 {
+		return true
+	} else {
+		return false
+	}
 }
