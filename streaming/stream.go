@@ -1,43 +1,48 @@
 package streaming
 
 import (
-	"fmt"
-	"os"
 	"log"
-	"bufio"
-	"encoding/json"
 )
 
+type Stream interface {
+	OnSubscribe(ChangeMessage MarketChangeMessage)
+	OnResubscribe(ChangeMessage MarketChangeMessage)
+	OnHeartbeat(ChangeMessage MarketChangeMessage)
+	OnUpdate(ChangeMessage MarketChangeMessage)
+}
 
-func ReadFile(directory string) {
-	fmt.Printf("Parsing file %v\n", directory)
 
-	file, err := os.Open(directory)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
+type MarketStream struct {
+	Cache	map[string]MarketCache
+}
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		//fmt.Println(scanner.Text())
 
-		var mc MarketChangeMessage
-		err := json.Unmarshal(scanner.Bytes(), &mc)
-		if err != nil {
-			log.Fatal(err)
+func (ms MarketStream) OnSubscribe(ChangeMessage MarketChangeMessage){
+	log.Println(ChangeMessage)
+}
+
+
+func (ms MarketStream) OnResubscribe(ChangeMessage MarketChangeMessage){
+	log.Println(ChangeMessage)
+}
+
+
+func (ms MarketStream) OnHeartbeat(ChangeMessage MarketChangeMessage){
+	log.Println(ChangeMessage)
+}
+
+
+func (ms MarketStream) OnUpdate(ChangeMessage MarketChangeMessage){
+	// todo update clk/initialClk
+	for _, marketChange := range ChangeMessage.MarketChanges {
+		log.Println(marketChange, ms.Cache)
+
+		if marketCache, ok := ms.Cache[marketChange.MarketId]; ok {
+			marketCache.UpdateCache(marketChange)
+		} else {
+			ms.Cache[marketChange.MarketId] = MarketCache{}
+			log.Println("created cache", marketChange.MarketId)
 		}
-		fmt.Println(mc)
-		//fmt.Println(mc.MarketChanges)
-
-		//for _, market := range mc.MarketChanges {
-		//	for _, runner := range market.RunnerChange {
-		//		fmt.Println(runner)
-		//	}
-		//}
 	}
-
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
+	// todo output snap
 }
