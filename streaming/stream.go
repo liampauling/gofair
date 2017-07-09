@@ -40,7 +40,7 @@ func (ms *MarketStream) OnUpdate(changeMessage MarketChangeMessage){
 		if marketCache, ok := ms.Cache[marketChange.MarketId]; ok {
 			marketCache.UpdateCache(changeMessage, marketChange)
 		} else {
-			ms.Cache[marketChange.MarketId] = CreateMarketCache(changeMessage, marketChange)
+			ms.Cache[marketChange.MarketId] = *CreateMarketCache(changeMessage, marketChange)
 			log.Println("Created new market cache", marketChange.MarketId)
 		}
 	}

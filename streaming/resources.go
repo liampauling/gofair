@@ -52,7 +52,7 @@ type RunnerChange struct {
 	SelectionId 			int64		`json:"id"`
 	Handicap 			*float64	`json:"hc"`
 	TradedVolume 			*float64	`json:"tv"`
-	LastTradedPrice 		*float64	`json:"ltp"`
+	LastTradedPrice 		float64		`json:"ltp"`
 	Traded 				[][] float64 	`json:"trd"`
 	//StartingPriceNear 		*float64	`json:"spn"`
 	//StartingPriceFar 		*float64	`json:"spf"`
@@ -72,7 +72,7 @@ type MarketChange struct {
 	Conflated		bool			`json:"con"`
 	MarketId		string			`json:"id"`
 	TradedVolume		*float64		`json:"tv"`
-	RunnerChange		*[]RunnerChange		`json:"rc"`
+	RunnerChange		[]RunnerChange		`json:"rc"`
 	MarketDefinition	*MarketDefinition	`json:"marketDefinition"`
 }
 

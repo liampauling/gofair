@@ -1,9 +1,11 @@
 package streaming
 
-import "log"
+import (
+	"log"
+)
 
 
-func CreateMarketCache(changeMessage MarketChangeMessage, marketChange MarketChange)(MarketCache){
+func CreateMarketCache(changeMessage MarketChangeMessage, marketChange MarketChange)(*MarketCache){
 	var cache MarketCache
 	cache.PublishTime = changeMessage.PublishTime
 	cache.MarketId = marketChange.MarketId
@@ -11,21 +13,25 @@ func CreateMarketCache(changeMessage MarketChangeMessage, marketChange MarketCha
 	cache.MarketDefinition = marketChange.MarketDefinition
 	cache.Runners = make(map[int64]RunnerCache)
 
-	for _, runnerChange := range *marketChange.RunnerChange {
-		cache.Runners[runnerChange.SelectionId] = CreateRunnerCache(runnerChange)
+	for _, runnerChange := range marketChange.RunnerChange {
+		cache.Runners[runnerChange.SelectionId] = *CreateRunnerCache(runnerChange)
 	}
-	return cache
+	return &cache
 }
 
 
-func CreateRunnerCache(change RunnerChange)(RunnerCache){
+func CreateRunnerCache(change RunnerChange)(*RunnerCache){
 	log.Println("Created new runner cache", change.SelectionId)
-	var cache RunnerCache
-	cache.SelectionId = change.SelectionId
-	cache.LastTradedPrice = change.LastTradedPrice
-	cache.TradedVolume = change.TradedVolume
-	//cache.StartingPriceNear = change.StartingPriceNear
-	//cache.StartingPriceFar = change.StartingPriceFar
+
+	//var cache RunnerCache
+	//cache.SelectionId = change.SelectionId
+	////if change.LastTradedPrice != nil {
+	//cache.LastTradedPrice = change.LastTradedPrice
+	////}
+	////cache.UpdateLastTradedPrice(change.LastTradedPrice)
+	//cache.TradedVolume = change.TradedVolume
+	////cache.StartingPriceNear = change.StartingPriceNear
+	////cache.StartingPriceFar = change.StartingPriceFar
 
 	// create traded data structure
 	var traded Available
@@ -37,9 +43,16 @@ func CreateRunnerCache(change RunnerChange)(RunnerCache){
 	}
 	traded.DeletionSelect = 1
 	traded.Reverse = false
-	cache.Traded = &traded
+	//cache.Traded = &traded
 
-	return cache
+	cache := RunnerCache{
+		change.SelectionId,
+		&change.LastTradedPrice,
+		change.TradedVolume,
+		&traded,
+	}
+
+	return &cache
 }
 
 
@@ -112,16 +125,21 @@ type RunnerCache struct {
 }
 
 
+func (cache *RunnerCache) UpdateLastTradedPrice(LastTradedPrice *float64) {
+	*cache.LastTradedPrice = *LastTradedPrice
+}
+
+
 func (cache *RunnerCache) UpdateCache(change RunnerChange) {
-	if cache.SelectionId == 10631117 {
-		log.Println("new", change.Traded, len(cache.Traded.Prices))
+	//if cache.SelectionId == 7424945 {
+	//	log.Println("new", change.Traded, len(cache.Traded.Prices))
+	//}
+	if change.LastTradedPrice != 0 {
+		cache.UpdateLastTradedPrice(&change.LastTradedPrice)
 	}
-	if change.LastTradedPrice != nil {
-		*cache.LastTradedPrice = *change.LastTradedPrice
-	}
-	if change.TradedVolume != nil {
-		*cache.TradedVolume = *change.TradedVolume
-	}
+	//if change.TradedVolume != nil {
+	//	cache.TradedVolume = change.TradedVolume
+	//}
 	//if change.StartingPriceNear != nil {
 	//	*cache.StartingPriceNear = *change.StartingPriceNear
 	//}
@@ -131,9 +149,9 @@ func (cache *RunnerCache) UpdateCache(change RunnerChange) {
 	if change.Traded != nil {
 		cache.Traded.Update(change.Traded)
 	}
-	if cache.SelectionId == 10631117 {
-		log.Println(len(cache.Traded.Prices))
-	}
+	//if cache.SelectionId == 7424945 {
+	//	log.Println(len(cache.Traded.Prices))
+	//}
 }
 
 
@@ -156,14 +174,14 @@ func (cache *MarketCache) UpdateCache(changeMessage MarketChangeMessage, marketC
 		cache.TradedVolume = marketChange.TradedVolume
 	}
 	if marketChange.RunnerChange != nil {
-		for _, runnerChange := range *marketChange.RunnerChange {
+		for _, runnerChange := range marketChange.RunnerChange {
 			if runnerCache, ok := cache.Runners[runnerChange.SelectionId]; ok {
 				runnerCache.UpdateCache(runnerChange)
 			} else {
-				cache.Runners[runnerChange.SelectionId] = CreateRunnerCache(runnerChange)
+				cache.Runners[runnerChange.SelectionId] = *CreateRunnerCache(runnerChange)
 			}
 		}
 	}
-	tem, _ := cache.Runners[10631117]
-	log.Println(tem.SelectionId, *tem.LastTradedPrice, *tem.TradedVolume, len(tem.Traded.Prices))
+	tem, _ := cache.Runners[7424945]
+	log.Println(tem.SelectionId, *tem.LastTradedPrice, len(tem.Traded.Prices))
 }
