@@ -1,8 +1,6 @@
 package streaming
 
-import (
-	"log"
-)
+import "log"
 
 
 func CreateMarketCache(changeMessage MarketChangeMessage, marketChange MarketChange)(*MarketCache){
@@ -74,41 +72,41 @@ func CreateRunnerCache(change RunnerChange)(*RunnerCache){
 	startingPriceLay.Reverse = false
 
 	// create bestAvailableToBack data structure
-	var bestAvailableToBack Available
+	var bestAvailableToBack AvailablePosition
 	for _, i := range change.BestAvailableToBack {
 		bestAvailableToBack.Prices = append(
 			bestAvailableToBack.Prices,
-			PriceSize{i[0], i[1]},
+			PositionPriceSize{i[0], i[1], i[2]},
 		)
 	}
 	bestAvailableToBack.Reverse = false
 
 	// create bestAvailableToLay data structure
-	var bestAvailableToLay Available
+	var bestAvailableToLay AvailablePosition
 	for _, i := range change.BestAvailableToLay {
 		bestAvailableToLay.Prices = append(
 			bestAvailableToLay.Prices,
-			PriceSize{i[0], i[1]},
+			PositionPriceSize{i[0], i[1],i[2]},
 		)
 	}
 	bestAvailableToLay.Reverse = false
 
 	// create bestDisplayAvailableToBack data structure
-	var bestDisplayAvailableToBack Available
+	var bestDisplayAvailableToBack AvailablePosition
 	for _, i := range change.BestDisplayAvailableToBack {
 		bestDisplayAvailableToBack.Prices = append(
 			bestDisplayAvailableToBack.Prices,
-			PriceSize{i[0], i[1]},
+			PositionPriceSize{i[0], i[1],i[2]},
 		)
 	}
 	bestDisplayAvailableToBack.Reverse = false
 
 	// create bestDisplayAvailableToLay data structure
-	var bestDisplayAvailableToLay Available
+	var bestDisplayAvailableToLay AvailablePosition
 	for _, i := range change.BestDisplayAvailableToLay {
 		bestDisplayAvailableToLay.Prices = append(
 			bestDisplayAvailableToLay.Prices,
-			PriceSize{i[0], i[1]},
+			PositionPriceSize{i[0], i[1],i[2]},
 		)
 	}
 	bestDisplayAvailableToLay.Reverse = false
@@ -249,10 +247,10 @@ type RunnerCache struct {
 	AvailableToLay 			*Available
 	StartingPriceBack 		*Available
 	StartingPriceLay		*Available
-	BestAvailableToBack		*Available
-	BestAvailableToLay		*Available
-	BestDisplayAvailableToBack	*Available
-	BestDisplayAvailableToLay	*Available
+	BestAvailableToBack		*AvailablePosition
+	BestAvailableToLay		*AvailablePosition
+	BestDisplayAvailableToBack	*AvailablePosition
+	BestDisplayAvailableToLay	*AvailablePosition
 }
 
 
@@ -326,7 +324,7 @@ func (cache *MarketCache) UpdateCache(changeMessage MarketChangeMessage, marketC
 			}
 		}
 	}
-	tem, _ := cache.Runners[7424945]
-	log.Println(tem.SelectionId, *tem.LastTradedPrice, len(tem.Traded.Prices), *tem.TradedVolume,
-	len(tem.AvailableToBack.Prices))
+	//tem, _ := cache.Runners[7424945]
+	//log.Println(tem.SelectionId, *tem.LastTradedPrice, len(tem.Traded.Prices), *tem.TradedVolume,
+	//len(tem.AvailableToBack.Prices))
 }
