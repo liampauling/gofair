@@ -68,13 +68,18 @@ func (available *Available) Clear(){
 }
 
 
+func (available *Available) Sort(){
+	// todo
+}
+
+
 func (available *Available) Update(updates [][]float64){
 	for _, update := range updates {
 		updated := false
 		for count, trade := range available.Prices {
 			if trade.Price == update[0] {
 				if update[available.DeletionSelect] == 0 {
-					log.Println("Delete", trade, update)
+					available.Prices = remove(available.Prices, count)
 					updated = true
 					break
 				} else {
@@ -91,6 +96,12 @@ func (available *Available) Update(updates [][]float64){
 }
 
 
+func remove(s []PriceSize, i int) []PriceSize {
+	s[len(s)-1], s[i] = s[i], s[len(s)-1]
+	return s[:len(s)-1]
+}
+
+
 type RunnerCache struct {
 	SelectionId 	int64
 	LastTradedPrice *float64
@@ -102,7 +113,7 @@ type RunnerCache struct {
 
 
 func (cache *RunnerCache) UpdateCache(change RunnerChange) {
-	if cache.SelectionId == 13219181 {
+	if cache.SelectionId == 10631117 {
 		log.Println("new", change.Traded, len(cache.Traded.Prices))
 	}
 	if change.LastTradedPrice != nil {
@@ -120,7 +131,7 @@ func (cache *RunnerCache) UpdateCache(change RunnerChange) {
 	if change.Traded != nil {
 		cache.Traded.Update(change.Traded)
 	}
-	if cache.SelectionId == 13219181 {
+	if cache.SelectionId == 10631117 {
 		log.Println(len(cache.Traded.Prices))
 	}
 }
@@ -153,6 +164,6 @@ func (cache *MarketCache) UpdateCache(changeMessage MarketChangeMessage, marketC
 			}
 		}
 	}
-	tem, _ := cache.Runners[13219181]
+	tem, _ := cache.Runners[10631117]
 	log.Println(tem.SelectionId, *tem.LastTradedPrice, *tem.TradedVolume, len(tem.Traded.Prices))
 }
