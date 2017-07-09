@@ -53,17 +53,17 @@ type RunnerChange struct {
 	Handicap 			*float64	`json:"hc"`
 	TradedVolume 			*float64	`json:"tv"`
 	LastTradedPrice 		*float64	`json:"ltp"`
-	Traded 				*[] [] float64 	`json:"trd"`
+	Traded 				[][] float64 	`json:"trd"`
 	//StartingPriceNear 		*float64	`json:"spn"`
 	//StartingPriceFar 		*float64	`json:"spf"`
-	StartingPriceBack 		*[] [] float64	`json:"spb"`
-	StartingPriceLay 		*[] [] float64	`json:"spl"`
-	AvailableToBack 		*[] [] float64	`json:"atb"`
-	AvailableToLay 			*[] [] float64	`json:"atl"`
-	BestAvailableToBack 		*[] [] float64	`json:"batb"`
-	BestAvailableToLay 		*[] [] float64	`json:"batl"`
-	BestDisplayAvailableToLay 	*[] [] float64	`json:"bdatl"`
-	BestDisplayAvailableToBack	*[] [] float64	`json:"bdatb"`
+	StartingPriceBack 		*[][]float64	`json:"spb"`
+	StartingPriceLay 		*[][]float64	`json:"spl"`
+	AvailableToBack 		*[][]float64	`json:"atb"`
+	AvailableToLay 			*[][]float64	`json:"atl"`
+	BestAvailableToBack 		*[][]float64	`json:"batb"`
+	BestAvailableToLay 		*[][]float64	`json:"batl"`
+	BestDisplayAvailableToLay 	*[][]float64	`json:"bdatl"`
+	BestDisplayAvailableToBack	*[][]float64	`json:"bdatb"`
 }
 
 
