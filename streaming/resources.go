@@ -54,8 +54,8 @@ type RunnerChange struct {
 	TradedVolume 			*float64	`json:"tv"`
 	LastTradedPrice 		*float64	`json:"ltp"`
 	Traded 				*[] [] float64 	`json:"trd"`
-	StartingPriceNear 		*float64	`json:"spn"`
-	StartingPriceFar 		*float64	`json:"spf"`
+	//StartingPriceNear 		*float64	`json:"spn"`
+	//StartingPriceFar 		*float64	`json:"spf"`
 	StartingPriceBack 		*[] [] float64	`json:"spb"`
 	StartingPriceLay 		*[] [] float64	`json:"spl"`
 	AvailableToBack 		*[] [] float64	`json:"atb"`

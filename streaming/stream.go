@@ -17,31 +17,31 @@ type MarketStream struct {
 }
 
 
-func (ms MarketStream) OnSubscribe(ChangeMessage MarketChangeMessage){
-	log.Println(ChangeMessage)
+func (ms *MarketStream) OnSubscribe(changeMessage MarketChangeMessage){
+	log.Println(changeMessage)
 }
 
 
-func (ms MarketStream) OnResubscribe(ChangeMessage MarketChangeMessage){
-	log.Println(ChangeMessage)
+func (ms *MarketStream) OnResubscribe(changeMessage MarketChangeMessage){
+	log.Println(changeMessage)
 }
 
 
-func (ms MarketStream) OnHeartbeat(ChangeMessage MarketChangeMessage){
-	log.Println(ChangeMessage)
+func (ms *MarketStream) OnHeartbeat(changeMessage MarketChangeMessage){
+	log.Println(changeMessage)
 }
 
 
-func (ms MarketStream) OnUpdate(ChangeMessage MarketChangeMessage){
+func (ms *MarketStream) OnUpdate(changeMessage MarketChangeMessage){
 	// todo update clk/initialClk
-	for _, marketChange := range ChangeMessage.MarketChanges {
-		log.Println(marketChange, ms.Cache)
+
+	for _, marketChange := range changeMessage.MarketChanges {
 
 		if marketCache, ok := ms.Cache[marketChange.MarketId]; ok {
-			marketCache.UpdateCache(marketChange)
+			marketCache.UpdateCache(changeMessage, marketChange)
 		} else {
-			ms.Cache[marketChange.MarketId] = MarketCache{}
-			log.Println("created cache", marketChange.MarketId)
+			ms.Cache[marketChange.MarketId] = CreateMarketCache(changeMessage, marketChange)
+			log.Println("Created new market cache", marketChange.MarketId)
 		}
 	}
 	// todo output snap

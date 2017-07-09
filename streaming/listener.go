@@ -14,6 +14,11 @@ func (l *Listener) AddMarketStream() {
 }
 
 
+func (l *Listener) AddOrderStream() {
+	// todo
+}
+
+
 func (l *Listener) OnData(ChangeMessage MarketChangeMessage) {
 	//todo check unique id
 	//todo error handler
@@ -32,12 +37,12 @@ func (l *Listener) OnData(ChangeMessage MarketChangeMessage) {
 
 
 func (l *Listener) onConnection(ChangeMessage MarketChangeMessage) {
-
+	// todo
 }
 
 
 func (l *Listener) onStatus(ChangeMessage MarketChangeMessage) {
-
+	// todo
 }
 
 
