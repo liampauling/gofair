@@ -19,13 +19,13 @@ type MarketFilter struct {
 	InPlayOnly		bool			`json:"inPlayOnly,omitempty"`
 	MarketBettingTypes	[]string		`json:"marketBettingTypes,omitempty"`
 	MarketTypeCOdes		[]string		`json:"marketTypeCOdes,omitempty"`
-	MarketStartTime		*TimeRangeFilter	`json:"marketStartTime,omitempty"`
+	MarketStartTime		TimeRangeFilter		`json:"marketStartTime,omitempty"`
 	WithOrders		string			`json:"withOrders,omitempty"`
 }
 
 
 type Params struct {
-	MarketFilter		*MarketFilter 		`json:"filter,omitempty"`
+	MarketFilter		MarketFilter 		`json:"filter,omitempty"`
 	MaxResults		int			`json:"maxResults,omitempty"`
 	Granularity		string			`json:"granularity,omitempty"`
 	MarketProjection	[]string		`json:"marketProjection,omitempty"`

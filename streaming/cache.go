@@ -1,18 +1,16 @@
 package streaming
 
-import (
-	"log"
-)
+import "log"
 
 
 func CreateMarketCache(changeMessage MarketChangeMessage, marketChange MarketChange)(*MarketCache){
-	var cache MarketCache
-	cache.PublishTime = changeMessage.PublishTime
-	cache.MarketId = marketChange.MarketId
-	cache.TradedVolume = marketChange.TradedVolume
-	cache.MarketDefinition = marketChange.MarketDefinition
-	cache.Runners = make(map[int64]RunnerCache)
-
+	cache := MarketCache{
+		changeMessage.PublishTime,
+		marketChange.MarketId,
+		marketChange.TradedVolume,
+		marketChange.MarketDefinition,
+		make(map[int64]RunnerCache),
+	}
 	for _, runnerChange := range marketChange.RunnerChange {
 		cache.Runners[runnerChange.SelectionId] = *CreateRunnerCache(runnerChange)
 	}
@@ -21,7 +19,7 @@ func CreateMarketCache(changeMessage MarketChangeMessage, marketChange MarketCha
 
 
 func CreateRunnerCache(change RunnerChange)(*RunnerCache){
-	log.Println("Created new runner cache", change.SelectionId)
+	log.Println("Creating new runner cache", change.SelectionId)
 
 	// create traded data structure
 	var traded Available

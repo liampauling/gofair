@@ -118,7 +118,7 @@ type marketCatalogue struct {
 }
 
 
-func (b *Betting) ListEventTypes(filter *MarketFilter) ([]eventTypeResult, error) {
+func (b *Betting) ListEventTypes(filter MarketFilter) ([]eventTypeResult, error) {
 	// create url
 	url := createUrl(api_betting_url, "listEventTypes/")
 
@@ -137,7 +137,7 @@ func (b *Betting) ListEventTypes(filter *MarketFilter) ([]eventTypeResult, error
 }
 
 
-func (b *Betting) ListCompetitions(filter *MarketFilter) ([]competitionResult, error) {
+func (b *Betting) ListCompetitions(filter MarketFilter) ([]competitionResult, error) {
 	// create url
 	url := createUrl(api_betting_url, "listCompetitions/")
 
@@ -156,7 +156,7 @@ func (b *Betting) ListCompetitions(filter *MarketFilter) ([]competitionResult, e
 }
 
 
-func (b *Betting) ListTimeRanges(filter *MarketFilter, granularity string) ([]timeRangeResult, error) {
+func (b *Betting) ListTimeRanges(filter MarketFilter, granularity string) ([]timeRangeResult, error) {
 	// create url
 	url := createUrl(api_betting_url, "listTimeRanges/")
 
@@ -176,7 +176,7 @@ func (b *Betting) ListTimeRanges(filter *MarketFilter, granularity string) ([]ti
 }
 
 
-func (b *Betting) ListEvents(filter *MarketFilter) ([]eventResult, error) {
+func (b *Betting) ListEvents(filter MarketFilter) ([]eventResult, error) {
 	// create url
 	url := createUrl(api_betting_url, "listEvents/")
 
@@ -195,7 +195,7 @@ func (b *Betting) ListEvents(filter *MarketFilter) ([]eventResult, error) {
 }
 
 
-func (b *Betting) ListMarketTypes(filter *MarketFilter) ([]marketTypeResult, error) {
+func (b *Betting) ListMarketTypes(filter MarketFilter) ([]marketTypeResult, error) {
 	// create url
 	url := createUrl(api_betting_url, "listMarketTypes/")
 
@@ -214,7 +214,7 @@ func (b *Betting) ListMarketTypes(filter *MarketFilter) ([]marketTypeResult, err
 }
 
 
-func (b *Betting) ListCountries(filter *MarketFilter) ([]countryResult, error) {
+func (b *Betting) ListCountries(filter MarketFilter) ([]countryResult, error) {
 	// create url
 	url := createUrl(api_betting_url, "listCountries/")
 
@@ -233,7 +233,7 @@ func (b *Betting) ListCountries(filter *MarketFilter) ([]countryResult, error) {
 }
 
 
-func (b *Betting) ListVenues(filter *MarketFilter) ([]venueResult, error) {
+func (b *Betting) ListVenues(filter MarketFilter) ([]venueResult, error) {
 	// create url
 	url := createUrl(api_betting_url, "listVenues/")
 
@@ -252,7 +252,7 @@ func (b *Betting) ListVenues(filter *MarketFilter) ([]venueResult, error) {
 }
 
 
-func (b *Betting) ListMarketCatalogue(filter *MarketFilter, marketProjection []string, sort string, maxResults int) (
+func (b *Betting) ListMarketCatalogue(filter MarketFilter, marketProjection []string, sort string, maxResults int) (
 	[]marketCatalogue, error) {
 	// create url
 	url := createUrl(api_betting_url, "listMarketCatalogue/")

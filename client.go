@@ -40,11 +40,18 @@ type Client struct {
 	session		*session
 	certificates	*tls.Certificate
 	Betting		*Betting
+	Historical	*Historical
 }
 
 
 // betting object
 type Betting struct {
+	Client		*Client
+}
+
+
+// historical object
+type Historical struct {
 	Client		*Client
 }
 
@@ -69,6 +76,10 @@ func NewClient(config *Config)(*Client, error){
 	// create betting
 	c.Betting = new(Betting)
 	c.Betting.Client = c
+
+	// create historical
+	c.Historical = new(Historical)
+	c.Historical.Client = c
 
 	return c, nil
 }
