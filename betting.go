@@ -1,122 +1,106 @@
 package gofair
 
-
 type eventType struct {
-	Id	string	`json:"id"`
-	Name	string 	`json:"name"`
+	Id   string `json:"id"`
+	Name string `json:"name"`
 }
-
 
 type eventTypeResult struct {
-	MarketCount	int		`json:"marketCount"`
-	EventType	*eventType 	`json:"eventType"`
+	MarketCount int        `json:"marketCount"`
+	EventType   *eventType `json:"eventType"`
 }
-
 
 type competition struct {
-	Id	string	`json:"id"`
-	Name	string 	`json:"name"`
+	Id   string `json:"id"`
+	Name string `json:"name"`
 }
-
 
 type competitionResult struct {
-	MarketCount		int		`json:"marketCount"`
-	CompetitionRegion	string		`json:"competitionRegion"`
-	Competition		*competition 	`json:"competition"`
+	MarketCount       int          `json:"marketCount"`
+	CompetitionRegion string       `json:"competitionRegion"`
+	Competition       *competition `json:"competition"`
 }
-
 
 type timeRange struct {
-	From	string	`json:"from"`
-	To	string 	`json:"to"`
+	From string `json:"from"`
+	To   string `json:"to"`
 }
-
 
 type timeRangeResult struct {
-	MarketCount		int		`json:"marketCount"`
-	TimeRange		*timeRange 	`json:"timeRange"`
+	MarketCount int        `json:"marketCount"`
+	TimeRange   *timeRange `json:"timeRange"`
 }
-
 
 type event struct {
-	Id		string	`json:"id"`
-	OpenDate	string 	`json:"openDate"`
-	TimeZone	string 	`json:"timezone"`
-	CountryCode	string 	`json:"countryCode"`
-	Name		string 	`json:"name"`
-	Venue		string 	`json:"venue"`
+	Id          string `json:"id"`
+	OpenDate    string `json:"openDate"`
+	TimeZone    string `json:"timezone"`
+	CountryCode string `json:"countryCode"`
+	Name        string `json:"name"`
+	Venue       string `json:"venue"`
 }
-
 
 type eventResult struct {
-	MarketCount	int		`json:"marketCount"`
-	Event		*event 		`json:"event"`
+	MarketCount int    `json:"marketCount"`
+	Event       *event `json:"event"`
 }
-
 
 type marketTypeResult struct {
-	MarketCount	int		`json:"marketCount"`
-	MarketType	string 		`json:"marketType"`
+	MarketCount int    `json:"marketCount"`
+	MarketType  string `json:"marketType"`
 }
-
 
 type countryResult struct {
-	MarketCount	int		`json:"marketCount"`
-	CountryCode	string 		`json:"countryCode"`
+	MarketCount int    `json:"marketCount"`
+	CountryCode string `json:"countryCode"`
 }
-
 
 type venueResult struct {
-	MarketCount	int		`json:"marketCount"`
-	Venue		string 		`json:"venue"`
+	MarketCount int    `json:"marketCount"`
+	Venue       string `json:"venue"`
 }
-
 
 type marketCatalogueDescription struct {
-	BettingType		string		`json:"bettingType"`
-	BSPMarket		bool 		`json:"bspMarket"`
-	DiscountAllowed		bool 		`json:"discountAllowed"`
-	MarketBaseRate		float32 	`json:"marketBaseRate"`
-	MarketTime		string 		`json:"marketTime"`
-	MarketType		string 		`json:"marketType"`
-	PersistenceEnabled	bool 		`json:"persistenceEnabled"`
-	Regulator		string 		`json:"regulator"`
-	Rules			string 		`json:"rules"`
-	RulesHasDate		bool 		`json:"rulesHasDate"`
-	SuspendDate		string 		`json:"suspendTime"`
-	TurnInPlayEnabled	bool 		`json:"turnInPlayEnabled"`
-	Wallet			string 		`json:"wallet"`
-	EachWayDivisor		float32 	`json:"eachWayDivisor"`
-	Clarifications		string 		`json:"clarifications"`
+	BettingType        string  `json:"bettingType"`
+	BSPMarket          bool    `json:"bspMarket"`
+	DiscountAllowed    bool    `json:"discountAllowed"`
+	MarketBaseRate     float32 `json:"marketBaseRate"`
+	MarketTime         string  `json:"marketTime"`
+	MarketType         string  `json:"marketType"`
+	PersistenceEnabled bool    `json:"persistenceEnabled"`
+	Regulator          string  `json:"regulator"`
+	Rules              string  `json:"rules"`
+	RulesHasDate       bool    `json:"rulesHasDate"`
+	SuspendDate        string  `json:"suspendTime"`
+	TurnInPlayEnabled  bool    `json:"turnInPlayEnabled"`
+	Wallet             string  `json:"wallet"`
+	EachWayDivisor     float32 `json:"eachWayDivisor"`
+	Clarifications     string  `json:"clarifications"`
 }
-
 
 type metadata struct {
-	RunnerId		int		`json:"runnerId"`
+	RunnerId int `json:"runnerId"`
 }
 
-
 type runnerCatalogue struct {
-	SelectionId		int		`json:"selectionId"`
-	RunnerName		string 		`json:"runnerName"`
-	SortPriority		int 		`json:"sortPriority"`
-	Handicap		float32 	`json:"handicap"`
+	SelectionId  int     `json:"selectionId"`
+	RunnerName   string  `json:"runnerName"`
+	SortPriority int     `json:"sortPriority"`
+	Handicap     float32 `json:"handicap"`
 	//Metadata		*metadata	`json:"metadata"`  //todo
 }
 
-
 type marketCatalogue struct {
-	MarketId			string		`json:"marketId"`
-	MarketName			string		`json:"marketName"`
-	TotalMatched			float32		`json:"totalMatched"`
-	MarketStartTime			string		`json:"marketStartTime"`
-	Competition			*competition	`json:"competition"`
-	Event				*event		`json:"event"`
-	EventType			*eventType	`json:"eventType"`
-	MarketCatalogueDescription	*marketCatalogueDescription 	`json:"description"`
-	Runners				*[]runnerCatalogue 	`json:"runners"`
+	MarketId                   string                      `json:"marketId"`
+	MarketName                 string                      `json:"marketName"`
+	TotalMatched               float32                     `json:"totalMatched"`
+	MarketStartTime            string                      `json:"marketStartTime"`
+	Competition                *competition                `json:"competition"`
+	Event                      *event                      `json:"event"`
+	EventType                  *eventType                  `json:"eventType"`
+	MarketCatalogueDescription *marketCatalogueDescription `json:"description"`
+	Runners                    *[]runnerCatalogue          `json:"runners"`
 }
-
 
 func (b *Betting) ListEventTypes(filter MarketFilter) ([]eventTypeResult, error) {
 	// create url
@@ -136,7 +120,6 @@ func (b *Betting) ListEventTypes(filter MarketFilter) ([]eventTypeResult, error)
 	return response, err
 }
 
-
 func (b *Betting) ListCompetitions(filter MarketFilter) ([]competitionResult, error) {
 	// create url
 	url := createUrl(api_betting_url, "listCompetitions/")
@@ -154,7 +137,6 @@ func (b *Betting) ListCompetitions(filter MarketFilter) ([]competitionResult, er
 	}
 	return response, err
 }
-
 
 func (b *Betting) ListTimeRanges(filter MarketFilter, granularity string) ([]timeRangeResult, error) {
 	// create url
@@ -175,7 +157,6 @@ func (b *Betting) ListTimeRanges(filter MarketFilter, granularity string) ([]tim
 	return response, err
 }
 
-
 func (b *Betting) ListEvents(filter MarketFilter) ([]eventResult, error) {
 	// create url
 	url := createUrl(api_betting_url, "listEvents/")
@@ -193,7 +174,6 @@ func (b *Betting) ListEvents(filter MarketFilter) ([]eventResult, error) {
 	}
 	return response, err
 }
-
 
 func (b *Betting) ListMarketTypes(filter MarketFilter) ([]marketTypeResult, error) {
 	// create url
@@ -213,7 +193,6 @@ func (b *Betting) ListMarketTypes(filter MarketFilter) ([]marketTypeResult, erro
 	return response, err
 }
 
-
 func (b *Betting) ListCountries(filter MarketFilter) ([]countryResult, error) {
 	// create url
 	url := createUrl(api_betting_url, "listCountries/")
@@ -232,7 +211,6 @@ func (b *Betting) ListCountries(filter MarketFilter) ([]countryResult, error) {
 	return response, err
 }
 
-
 func (b *Betting) ListVenues(filter MarketFilter) ([]venueResult, error) {
 	// create url
 	url := createUrl(api_betting_url, "listVenues/")
@@ -250,7 +228,6 @@ func (b *Betting) ListVenues(filter MarketFilter) ([]venueResult, error) {
 	}
 	return response, err
 }
-
 
 func (b *Betting) ListMarketCatalogue(filter MarketFilter, marketProjection []string, sort string, maxResults int) (
 	[]marketCatalogue, error) {

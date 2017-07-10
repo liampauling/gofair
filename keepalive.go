@@ -5,14 +5,12 @@ import (
 	"time"
 )
 
-
 type keepAliveResult struct {
-	SessionToken	string `json:"sessionToken"`
-	Token		string `json:"token"`
-	Status		string `json:"status"`
-	Error		string `json:"error"`
+	SessionToken string `json:"sessionToken"`
+	Token        string `json:"token"`
+	Status       string `json:"status"`
+	Error        string `json:"error"`
 }
-
 
 func (c *Client) KeepAlive() (keepAliveResult, error) {
 	// build url

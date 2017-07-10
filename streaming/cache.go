@@ -2,8 +2,7 @@ package streaming
 
 import "log"
 
-
-func CreateMarketCache(changeMessage MarketChangeMessage, marketChange MarketChange)(*MarketCache){
+func CreateMarketCache(changeMessage MarketChangeMessage, marketChange MarketChange) *MarketCache {
 	cache := MarketCache{
 		changeMessage.PublishTime,
 		marketChange.MarketId,
@@ -17,8 +16,7 @@ func CreateMarketCache(changeMessage MarketChangeMessage, marketChange MarketCha
 	return &cache
 }
 
-
-func CreateRunnerCache(change RunnerChange)(*RunnerCache){
+func CreateRunnerCache(change RunnerChange) *RunnerCache {
 	log.Println("Creating new runner cache", change.SelectionId)
 
 	// create traded data structure
@@ -86,7 +84,7 @@ func CreateRunnerCache(change RunnerChange)(*RunnerCache){
 	for _, i := range change.BestAvailableToLay {
 		bestAvailableToLay.Prices = append(
 			bestAvailableToLay.Prices,
-			PositionPriceSize{i[0], i[1],i[2]},
+			PositionPriceSize{i[0], i[1], i[2]},
 		)
 	}
 	bestAvailableToLay.Reverse = false
@@ -96,7 +94,7 @@ func CreateRunnerCache(change RunnerChange)(*RunnerCache){
 	for _, i := range change.BestDisplayAvailableToBack {
 		bestDisplayAvailableToBack.Prices = append(
 			bestDisplayAvailableToBack.Prices,
-			PositionPriceSize{i[0], i[1],i[2]},
+			PositionPriceSize{i[0], i[1], i[2]},
 		)
 	}
 	bestDisplayAvailableToBack.Reverse = false
@@ -106,7 +104,7 @@ func CreateRunnerCache(change RunnerChange)(*RunnerCache){
 	for _, i := range change.BestDisplayAvailableToLay {
 		bestDisplayAvailableToLay.Prices = append(
 			bestDisplayAvailableToLay.Prices,
-			PositionPriceSize{i[0], i[1],i[2]},
+			PositionPriceSize{i[0], i[1], i[2]},
 		)
 	}
 	bestDisplayAvailableToLay.Reverse = false
@@ -128,7 +126,6 @@ func CreateRunnerCache(change RunnerChange)(*RunnerCache){
 	return &cache
 }
 
-
 type AvailableInterface interface {
 	Clear()
 	Sort()
@@ -138,54 +135,45 @@ type AvailableInterface interface {
 	Update([][]float64)
 }
 
-
 type PriceSize struct {
-	Price 		float64
-	Size 		float64
+	Price float64
+	Size  float64
 }
-
 
 type PositionPriceSize struct {
-	Position 	float64
-	Price 		float64
-	Size 		float64
+	Position float64
+	Price    float64
+	Size     float64
 }
-
 
 type AvailablePosition struct {
-	Prices		[]PositionPriceSize
-	Reverse		bool
+	Prices  []PositionPriceSize
+	Reverse bool
 }
 
-
-func (available *AvailablePosition) Clear(){
+func (available *AvailablePosition) Clear() {
 	available.Prices = nil
 }
 
-
-func (available *AvailablePosition) Sort(){
+func (available *AvailablePosition) Sort() {
 	// todo
 }
 
-
-func (available *AvailablePosition) UpdatePrice(count int, update []float64){
+func (available *AvailablePosition) UpdatePrice(count int, update []float64) {
 	available.Prices[count] = PositionPriceSize{update[0], update[1], update[2]}
 }
 
-
-func (available *AvailablePosition) AppendPrice(update []float64){
+func (available *AvailablePosition) AppendPrice(update []float64) {
 	available.Prices = append(available.Prices, PositionPriceSize{update[0], update[1], update[2]})
 }
 
-
-func (available *AvailablePosition) RemovePrice(i int){
+func (available *AvailablePosition) RemovePrice(i int) {
 	s := available.Prices
 	s[len(s)-1], s[i] = s[i], s[len(s)-1]
 	available.Prices = s[:len(s)-1]
 }
 
-
-func (available *AvailablePosition) Update(updates [][]float64){
+func (available *AvailablePosition) Update(updates [][]float64) {
 	for _, update := range updates {
 		updated := false
 		for count, trade := range available.Prices {
@@ -207,41 +195,34 @@ func (available *AvailablePosition) Update(updates [][]float64){
 	}
 }
 
-
 type Available struct {
-	Prices		[]PriceSize
-	Reverse		bool
+	Prices  []PriceSize
+	Reverse bool
 }
 
-
-func (available *Available) Clear(){
+func (available *Available) Clear() {
 	available.Prices = nil
 }
 
-
-func (available *Available) Sort(){
+func (available *Available) Sort() {
 	// todo
 }
 
-
-func (available *Available) UpdatePrice(count int, update []float64){
+func (available *Available) UpdatePrice(count int, update []float64) {
 	available.Prices[count] = PriceSize{update[0], update[1]}
 }
 
-
-func (available *Available) AppendPrice(update []float64){
+func (available *Available) AppendPrice(update []float64) {
 	available.Prices = append(available.Prices, PriceSize{update[0], update[1]})
 }
 
-
-func (available *Available) RemovePrice(i int){
+func (available *Available) RemovePrice(i int) {
 	s := available.Prices
 	s[len(s)-1], s[i] = s[i], s[len(s)-1]
 	available.Prices = s[:len(s)-1]
 }
 
-
-func (available *Available) Update(updates [][]float64){
+func (available *Available) Update(updates [][]float64) {
 	for _, update := range updates {
 		updated := false
 		for count, trade := range available.Prices {
@@ -262,7 +243,6 @@ func (available *Available) Update(updates [][]float64){
 		}
 	}
 }
-
 
 //func UpdateTwo(available AvailableInterface, updates [][]float64) {
 //	for _, update := range updates {
@@ -286,24 +266,22 @@ func (available *Available) Update(updates [][]float64){
 //	}
 //}
 
-
 type RunnerCache struct {
-	SelectionId 			int64
-	LastTradedPrice 		*float64
-	TradedVolume 			*float64
+	SelectionId     int64
+	LastTradedPrice *float64
+	TradedVolume    *float64
 	//StartingPriceNear 		*float64
 	//StartingPriceFar 		*float64
-	Traded 				*Available
-	AvailableToBack 		*Available
-	AvailableToLay 			*Available
-	StartingPriceBack 		*Available
-	StartingPriceLay		*Available
-	BestAvailableToBack		*AvailablePosition
-	BestAvailableToLay		*AvailablePosition
-	BestDisplayAvailableToBack	*AvailablePosition
-	BestDisplayAvailableToLay	*AvailablePosition
+	Traded                     *Available
+	AvailableToBack            *Available
+	AvailableToLay             *Available
+	StartingPriceBack          *Available
+	StartingPriceLay           *Available
+	BestAvailableToBack        *AvailablePosition
+	BestAvailableToLay         *AvailablePosition
+	BestDisplayAvailableToBack *AvailablePosition
+	BestDisplayAvailableToLay  *AvailablePosition
 }
-
 
 func (cache *RunnerCache) UpdateCache(change RunnerChange) {
 	if change.LastTradedPrice != 0 {
@@ -349,15 +327,13 @@ func (cache *RunnerCache) UpdateCache(change RunnerChange) {
 	}
 }
 
-
 type MarketCache struct {
-	PublishTime		int64
-	MarketId		string
-	TradedVolume		*float64
-	MarketDefinition	*MarketDefinition
-	Runners 		map[int64]RunnerCache
+	PublishTime      int64
+	MarketId         string
+	TradedVolume     *float64
+	MarketDefinition *MarketDefinition
+	Runners          map[int64]RunnerCache
 }
-
 
 func (cache *MarketCache) UpdateCache(changeMessage MarketChangeMessage, marketChange MarketChange) {
 	cache.PublishTime = changeMessage.PublishTime
@@ -379,5 +355,5 @@ func (cache *MarketCache) UpdateCache(changeMessage MarketChangeMessage, marketC
 	}
 	tem, _ := cache.Runners[7424945]
 	log.Println(tem.SelectionId, *tem.LastTradedPrice, len(tem.Traded.Prices), *tem.TradedVolume,
-	len(tem.AvailableToBack.Prices))
+		len(tem.AvailableToBack.Prices))
 }

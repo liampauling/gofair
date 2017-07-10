@@ -1,63 +1,68 @@
 package gofair
 
 import (
-	"time"
 	"crypto/tls"
+	"time"
 )
-
 
 // betfair api endpoints
 const (
-	login_url = "https://identitysso-api.betfair.com/api/"
-	identity_url = "https://identitysso.betfair.com/api/"
+	login_url       = "https://identitysso-api.betfair.com/api/"
+	identity_url    = "https://identitysso.betfair.com/api/"
 	api_betting_url = "https://api.betfair.com/exchange/betting/rest/v1.0/"
 	api_account_url = "https://api.betfair.com/exchange/account/rest/v1.0/"
-	navigation_url = "https://api.betfair.com/exchange/betting/rest/v1/en/navigation/menu.json"
+	navigation_url  = "https://api.betfair.com/exchange/betting/rest/v1/en/navigation/menu.json"
 )
-
 
 // holds login data
 type Config struct {
-	Username 	string
-	Password 	string
-	AppKey		string
-	CertFile 	string
-	KeyFile 	string
-	Locale		string
+	Username string
+	Password string
+	AppKey   string
+	CertFile string
+	KeyFile  string
+	Locale   string
 }
-
 
 // holds session data
 type session struct {
-	SessionToken 	string
-	LoginTime	time.Time
+	SessionToken string
+	LoginTime    time.Time
 }
-
 
 // main client object
 type Client struct {
-	config		*Config
-	session		*session
-	certificates	*tls.Certificate
-	Betting		*Betting
-	Historical	*Historical
+	config       *Config
+	session      *session
+	certificates *tls.Certificate
+	Betting      *Betting
+	Account      *Account
+	Streaming    *Streaming
+	Historical   *Historical
 }
-
 
 // betting object
 type Betting struct {
-	Client		*Client
+	Client *Client
 }
 
+// account object
+type Account struct {
+	Client *Client
+}
+
+// streaming object
+type Streaming struct {
+	Client *Client
+}
 
 // historical object
 type Historical struct {
-	Client		*Client
+	Client *Client
 }
 
-
 // creates new client
-func NewClient(config *Config)(*Client, error){
+func NewClient(config *Config) (*Client, error) {
 	c := new(Client)
 
 	// create session
@@ -77,6 +82,14 @@ func NewClient(config *Config)(*Client, error){
 	c.Betting = new(Betting)
 	c.Betting.Client = c
 
+	// create account
+	c.Account = new(Account)
+	c.Account.Client = c
+
+	// create streaming
+	c.Streaming = new(Streaming)
+	c.Streaming.Client = c
+
 	// create historical
 	c.Historical = new(Historical)
 	c.Historical.Client = c
@@ -84,8 +97,7 @@ func NewClient(config *Config)(*Client, error){
 	return c, nil
 }
 
-
-func (c *Client) SessionExpired() (bool){
+func (c *Client) SessionExpired() bool {
 	// returns True if client not logged in or expired
 	// betfair requires keep alive every 4hrs (20mins ITA)
 	if c.session.SessionToken == "" {

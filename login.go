@@ -1,21 +1,19 @@
 package gofair
 
 import (
-	"strings"
-	"encoding/json"
-	"time"
 	"crypto/tls"
-	"net/http"
+	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"net/http"
+	"strings"
+	"time"
 )
 
-
 type loginResult struct {
-	LoginStatus	string	`json:"loginStatus"`
-	SessionToken	string 	`json:"sessionToken"`
+	LoginStatus  string `json:"loginStatus"`
+	SessionToken string `json:"sessionToken"`
 }
-
 
 func (c *Client) Login() (loginResult, error) {
 	// build body
@@ -25,7 +23,7 @@ func (c *Client) Login() (loginResult, error) {
 	url := createUrl(login_url, "certlogin")
 
 	// make request
-	resp, err := loginRequest(c, url,  body)
+	resp, err := loginRequest(c, url, body)
 	if err != nil {
 		return *new(loginResult), err
 	}
@@ -43,17 +41,16 @@ func (c *Client) Login() (loginResult, error) {
 	return result, nil
 }
 
-
-func loginRequest(c *Client, url string, body *strings.Reader) ([]byte, error){
+func loginRequest(c *Client, url string, body *strings.Reader) ([]byte, error) {
 
 	// HTTP client
-	ssl := &tls.Config {
-		Certificates: []tls.Certificate{*c.certificates},
+	ssl := &tls.Config{
+		Certificates:       []tls.Certificate{*c.certificates},
 		InsecureSkipVerify: true,
 	}
 
-	client := &http.Client {
-		Transport: &http.Transport {
+	client := &http.Client{
+		Transport: &http.Transport{
 			TLSClientConfig: ssl,
 		},
 	}

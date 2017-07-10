@@ -2,20 +2,18 @@ package gofair
 
 import (
 	"encoding/json"
-	"time"
-	"net/http"
 	"errors"
 	"io/ioutil"
+	"net/http"
+	"time"
 )
 
-
 type logoutResult struct {
-	Token	string `json:"token"`
-	Product	string `json:"product"`
-	Status	string `json:"status"`
-	Error	string `json:"error"`
+	Token   string `json:"token"`
+	Product string `json:"product"`
+	Status  string `json:"status"`
+	Error   string `json:"error"`
 }
-
 
 func (c *Client) Logout() (logoutResult, error) {
 	// build url
@@ -40,8 +38,7 @@ func (c *Client) Logout() (logoutResult, error) {
 	return result, nil
 }
 
-
-func logoutRequest(c *Client, url string) ([]byte, error){
+func logoutRequest(c *Client, url string) ([]byte, error) {
 
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
@@ -49,12 +46,12 @@ func logoutRequest(c *Client, url string) ([]byte, error){
 	}
 
 	// set headers
-	req.Header.Set("Accept","application/json")
+	req.Header.Set("Accept", "application/json")
 	req.Header.Set("X-Application", c.config.AppKey)
 	req.Header.Set("X-Authentication", c.session.SessionToken)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	client := &http.Client {}
+	client := &http.Client{}
 
 	resp, err := client.Do(req)
 

@@ -1,14 +1,14 @@
 package gofair
 
 import (
-	"gofair/streaming"
-	"os"
-	"log"
 	"bufio"
 	"encoding/json"
+	"gofair/streaming"
+	"log"
+	"os"
 )
 
-func (h *Historical) ParseHistoricalData(directory string, listener streaming.Listener)(error) {
+func (h *Historical) ParseHistoricalData(directory string, listener streaming.Listener) error {
 	file, err := os.Open(directory)
 	if err != nil {
 		log.Fatal(err)

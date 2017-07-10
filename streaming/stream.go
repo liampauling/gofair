@@ -11,28 +11,23 @@ type Stream interface {
 	OnUpdate(ChangeMessage MarketChangeMessage)
 }
 
-
 type MarketStream struct {
-	Cache	map[string]MarketCache
+	Cache map[string]MarketCache
 }
 
-
-func (ms *MarketStream) OnSubscribe(changeMessage MarketChangeMessage){
+func (ms *MarketStream) OnSubscribe(changeMessage MarketChangeMessage) {
 	log.Println(changeMessage)
 }
 
-
-func (ms *MarketStream) OnResubscribe(changeMessage MarketChangeMessage){
+func (ms *MarketStream) OnResubscribe(changeMessage MarketChangeMessage) {
 	log.Println(changeMessage)
 }
 
-
-func (ms *MarketStream) OnHeartbeat(changeMessage MarketChangeMessage){
+func (ms *MarketStream) OnHeartbeat(changeMessage MarketChangeMessage) {
 	log.Println(changeMessage)
 }
 
-
-func (ms *MarketStream) OnUpdate(changeMessage MarketChangeMessage){
+func (ms *MarketStream) OnUpdate(changeMessage MarketChangeMessage) {
 	// todo update clk/initialClk
 
 	for _, marketChange := range changeMessage.MarketChanges {

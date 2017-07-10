@@ -1,32 +1,28 @@
 package gofair
 
 import (
-	"net/http"
+	"encoding/json"
 	"errors"
 	"io/ioutil"
-	"encoding/json"
-	"strings"
 	"log"
+	"net/http"
+	"strings"
 )
 
-
-func createUrl(endpoint string, method string)(string){
+func createUrl(endpoint string, method string) string {
 	return endpoint + method
 }
 
-
-type Detail struct {}
-
+type Detail struct{}
 
 type ErrorResponse struct {
 	//b'{"faultcode":"Client","faultstring":"DSC-0018","detail":{}}'
-	FaultCode	string		`json:"faultcode"`
-	FaultString	string 		`json:"faultstring"`
-	Detail		*Detail 	`json:"detail"`
+	FaultCode   string  `json:"faultcode"`
+	FaultString string  `json:"faultstring"`
+	Detail      *Detail `json:"detail"`
 }
 
-
-func logError(data []byte)(error){
+func logError(data []byte) error {
 	var errorResp ErrorResponse
 	if err := json.Unmarshal(data, &errorResp); err != nil {
 		return err
@@ -35,8 +31,7 @@ func logError(data []byte)(error){
 	return nil
 }
 
-
-func (b *Betting) Request(url string, params *Params, v interface{}) (error) {
+func (b *Betting) Request(url string, params *Params, v interface{}) error {
 	//params.Locale = b.Client.config.Locale
 
 	bytes, err := json.Marshal(params)
@@ -55,9 +50,9 @@ func (b *Betting) Request(url string, params *Params, v interface{}) (error) {
 	req.Header.Set("X-Authentication", b.Client.session.SessionToken)
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Connection","keep-alive")
+	req.Header.Set("Connection", "keep-alive")
 
-	client := &http.Client {}
+	client := &http.Client{}
 
 	resp, err := client.Do(req)
 
