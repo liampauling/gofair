@@ -1,5 +1,7 @@
 package gofair
 
+import "time"
+
 type eventType struct {
 	Id   string `json:"id"`
 	Name string `json:"name"`
@@ -7,7 +9,7 @@ type eventType struct {
 
 type eventTypeResult struct {
 	MarketCount int        `json:"marketCount"`
-	EventType   *eventType `json:"eventType"`
+	EventType   eventType  `json:"eventType"`
 }
 
 type competition struct {
@@ -18,17 +20,17 @@ type competition struct {
 type competitionResult struct {
 	MarketCount       int          `json:"marketCount"`
 	CompetitionRegion string       `json:"competitionRegion"`
-	Competition       *competition `json:"competition"`
+	Competition       competition  `json:"competition"`
 }
 
 type timeRange struct {
-	From string `json:"from"`
-	To   string `json:"to"`
+	From time.Time `json:"from"`
+	To   time.Time `json:"to"`
 }
 
 type timeRangeResult struct {
 	MarketCount int        `json:"marketCount"`
-	TimeRange   *timeRange `json:"timeRange"`
+	TimeRange   timeRange  `json:"timeRange"`
 }
 
 type event struct {
@@ -42,7 +44,7 @@ type event struct {
 
 type eventResult struct {
 	MarketCount int    `json:"marketCount"`
-	Event       *event `json:"event"`
+	Event       event  `json:"event"`
 }
 
 type marketTypeResult struct {
@@ -61,21 +63,21 @@ type venueResult struct {
 }
 
 type marketCatalogueDescription struct {
-	BettingType        string  `json:"bettingType"`
-	BSPMarket          bool    `json:"bspMarket"`
-	DiscountAllowed    bool    `json:"discountAllowed"`
-	MarketBaseRate     float32 `json:"marketBaseRate"`
-	MarketTime         string  `json:"marketTime"`
-	MarketType         string  `json:"marketType"`
-	PersistenceEnabled bool    `json:"persistenceEnabled"`
-	Regulator          string  `json:"regulator"`
-	Rules              string  `json:"rules"`
-	RulesHasDate       bool    `json:"rulesHasDate"`
-	SuspendDate        string  `json:"suspendTime"`
-	TurnInPlayEnabled  bool    `json:"turnInPlayEnabled"`
-	Wallet             string  `json:"wallet"`
-	EachWayDivisor     float32 `json:"eachWayDivisor"`
-	Clarifications     string  `json:"clarifications"`
+	BettingType        string    `json:"bettingType"`
+	BSPMarket          bool      `json:"bspMarket"`
+	DiscountAllowed    bool      `json:"discountAllowed"`
+	MarketBaseRate     float32   `json:"marketBaseRate"`
+	MarketTime         time.Time `json:"marketTime"`
+	MarketType         string    `json:"marketType"`
+	PersistenceEnabled bool      `json:"persistenceEnabled"`
+	Regulator          string    `json:"regulator"`
+	Rules              string    `json:"rules"`
+	RulesHasDate       bool      `json:"rulesHasDate"`
+	SuspendDate        time.Time `json:"suspendTime"`
+	TurnInPlayEnabled  bool      `json:"turnInPlayEnabled"`
+	Wallet             string    `json:"wallet"`
+	EachWayDivisor     float32   `json:"eachWayDivisor"`
+	Clarifications     string    `json:"clarifications"`
 }
 
 type metadata struct {
@@ -94,12 +96,12 @@ type marketCatalogue struct {
 	MarketId                   string                      `json:"marketId"`
 	MarketName                 string                      `json:"marketName"`
 	TotalMatched               float32                     `json:"totalMatched"`
-	MarketStartTime            string                      `json:"marketStartTime"`
-	Competition                *competition                `json:"competition"`
-	Event                      *event                      `json:"event"`
-	EventType                  *eventType                  `json:"eventType"`
-	MarketCatalogueDescription *marketCatalogueDescription `json:"description"`
-	Runners                    *[]runnerCatalogue          `json:"runners"`
+	MarketStartTime            time.Time                   `json:"marketStartTime"`
+	Competition                competition                 `json:"competition"`
+	Event                      event                       `json:"event"`
+	EventType                  eventType                   `json:"eventType"`
+	MarketCatalogueDescription marketCatalogueDescription  `json:"description"`
+	Runners                    []runnerCatalogue           `json:"runners"`
 }
 
 func (b *Betting) ListEventTypes(filter MarketFilter) ([]eventTypeResult, error) {

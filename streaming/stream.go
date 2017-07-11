@@ -1,8 +1,6 @@
 package streaming
 
-import (
-	"log"
-)
+import "log"
 
 type Stream interface {
 	OnSubscribe(ChangeMessage MarketChangeMessage)

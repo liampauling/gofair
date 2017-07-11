@@ -19,7 +19,7 @@ func (l *Listener) OnData(ChangeMessage MarketChangeMessage) {
 	//todo check unique id
 	//todo error handler
 
-	switch *ChangeMessage.Operation {
+	switch ChangeMessage.Operation {
 	case "connection":
 		l.onConnection(ChangeMessage)
 	case "status":

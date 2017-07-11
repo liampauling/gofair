@@ -34,7 +34,7 @@ type MarketDefinition struct {
 	SuspendTime           string              `json:"suspendTime"`
 	DiscountAllowed       bool                `json:"discountAllowed"`
 	PersistenceEnabled    bool                `json:"persistenceEnabled"`
-	Runners               *[]RunnerDefinition `json:"runners"`
+	Runners               []RunnerDefinition  `json:"runners"`
 	Version               int64               `json:"version"`
 	EventTypeId           string              `json:"eventTypeId"`
 	Complete              bool                `json:"complete"`
@@ -67,15 +67,15 @@ type MarketChange struct {
 	Image            bool              `json:"img"`
 	Conflated        bool              `json:"con"`
 	MarketId         string            `json:"id"`
-	TradedVolume     *float64          `json:"tv"`
+	TradedVolume     float64           `json:"tv"`
 	RunnerChange     []RunnerChange    `json:"rc"`
 	MarketDefinition *MarketDefinition `json:"marketDefinition"`
 }
 
 type MarketChangeMessage struct {
 	MarketChanges []MarketChange `json:"mc"`
-	PublishTime   int64          `json:"pt"`
-	Operation     *string        `json:"op"`
+	PublishTime   int            `json:"pt"`
+	Operation     string         `json:"op"`
 	ChangeType    string         `json:"ct"`
 	InitialClk    string         `json:"initialClk"`
 	Clk           string         `json:"clk"`

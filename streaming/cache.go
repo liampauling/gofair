@@ -1,13 +1,17 @@
 package streaming
 
-import "log"
+import (
+	"log"
+	"strconv"
+	"time"
+)
 
 func CreateMarketCache(changeMessage MarketChangeMessage, marketChange MarketChange) *MarketCache {
 	cache := MarketCache{
 		changeMessage.PublishTime,
 		marketChange.MarketId,
 		marketChange.TradedVolume,
-		marketChange.MarketDefinition,
+		*marketChange.MarketDefinition,
 		make(map[int64]RunnerCache),
 	}
 	for _, runnerChange := range marketChange.RunnerChange {
@@ -328,10 +332,10 @@ func (cache *RunnerCache) UpdateCache(change RunnerChange) {
 }
 
 type MarketCache struct {
-	PublishTime      int64
+	PublishTime      int
 	MarketId         string
-	TradedVolume     *float64
-	MarketDefinition *MarketDefinition
+	TradedVolume     float64
+	MarketDefinition MarketDefinition
 	Runners          map[int64]RunnerCache
 }
 
@@ -339,9 +343,10 @@ func (cache *MarketCache) UpdateCache(changeMessage MarketChangeMessage, marketC
 	cache.PublishTime = changeMessage.PublishTime
 
 	if marketChange.MarketDefinition != nil {
-		cache.MarketDefinition = marketChange.MarketDefinition
+		cache.MarketDefinition = *marketChange.MarketDefinition
+		log.Println("Update", marketChange.MarketDefinition)
 	}
-	if marketChange.TradedVolume != nil {
+	if marketChange.TradedVolume != 0 {
 		cache.TradedVolume = marketChange.TradedVolume
 	}
 	if marketChange.RunnerChange != nil {
@@ -353,7 +358,17 @@ func (cache *MarketCache) UpdateCache(changeMessage MarketChangeMessage, marketC
 			}
 		}
 	}
-	tem, _ := cache.Runners[7424945]
-	log.Println(tem.SelectionId, *tem.LastTradedPrice, len(tem.Traded.Prices), *tem.TradedVolume,
-		len(tem.AvailableToBack.Prices))
+	tem, _ := cache.Runners[12787754]
+	s := strconv.Itoa(cache.PublishTime)
+	log.Println(MsToTime(s), tem.SelectionId, *tem.LastTradedPrice, len(tem.Traded.Prices), *tem.TradedVolume,
+		len(tem.AvailableToBack.Prices), cache.MarketDefinition.Status, cache.MarketDefinition.BetDelay, cache.MarketDefinition.CrossMatching)
+}
+
+func MsToTime(ms string) (time.Time) {
+	msInt, err := strconv.ParseInt(ms, 10, 64)
+	if err != nil {
+		return time.Time{}
+	}
+
+	return time.Unix(0, msInt*int64(time.Millisecond))
 }
