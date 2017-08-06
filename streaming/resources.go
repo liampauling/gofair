@@ -43,6 +43,8 @@ type MarketDefinition struct {
 	BspReconciled         bool                `json:"bspReconciled"`
 	LineInterval          float64             `json:"lineInterval"`
 	Status                string              `json:"status"`
+	PriceLadderDescription           string              `json:"priceLadderDescription"`
+	KeyLineDefinition                string              `json:"keyLineDefinition"`
 }
 
 type RunnerChange struct {

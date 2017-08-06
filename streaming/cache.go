@@ -4,14 +4,16 @@ import (
 	"log"
 	"strconv"
 	"time"
+	//"os"
+	//"fmt"
 )
 
 func CreateMarketCache(changeMessage MarketChangeMessage, marketChange MarketChange) *MarketCache {
 	cache := MarketCache{
-		changeMessage.PublishTime,
+		&changeMessage.PublishTime,
 		marketChange.MarketId,
-		marketChange.TradedVolume,
-		*marketChange.MarketDefinition,
+		&marketChange.TradedVolume,
+		marketChange.MarketDefinition,
 		make(map[int64]RunnerCache),
 	}
 	for _, runnerChange := range marketChange.RunnerChange {
@@ -332,22 +334,21 @@ func (cache *RunnerCache) UpdateCache(change RunnerChange) {
 }
 
 type MarketCache struct {
-	PublishTime      int
+	PublishTime      *int
 	MarketId         string
-	TradedVolume     float64
-	MarketDefinition MarketDefinition
+	TradedVolume     *float64
+	MarketDefinition *MarketDefinition
 	Runners          map[int64]RunnerCache
 }
 
 func (cache *MarketCache) UpdateCache(changeMessage MarketChangeMessage, marketChange MarketChange) {
-	cache.PublishTime = changeMessage.PublishTime
+	*cache.PublishTime = changeMessage.PublishTime
 
 	if marketChange.MarketDefinition != nil {
-		cache.MarketDefinition = *marketChange.MarketDefinition
-		log.Println("Update", marketChange.MarketDefinition)
+		*cache.MarketDefinition = *marketChange.MarketDefinition
 	}
 	if marketChange.TradedVolume != 0 {
-		cache.TradedVolume = marketChange.TradedVolume
+		*cache.TradedVolume = marketChange.TradedVolume
 	}
 	if marketChange.RunnerChange != nil {
 		for _, runnerChange := range marketChange.RunnerChange {
@@ -358,10 +359,21 @@ func (cache *MarketCache) UpdateCache(changeMessage MarketChangeMessage, marketC
 			}
 		}
 	}
-	tem, _ := cache.Runners[12787754]
-	s := strconv.Itoa(cache.PublishTime)
-	log.Println(MsToTime(s), tem.SelectionId, *tem.LastTradedPrice, len(tem.Traded.Prices), *tem.TradedVolume,
-		len(tem.AvailableToBack.Prices), cache.MarketDefinition.Status, cache.MarketDefinition.BetDelay, cache.MarketDefinition.CrossMatching)
+	//tem, _ := cache.Runners[12943079]
+	//s := strconv.Itoa(*cache.PublishTime)
+	//s_t := fmt.Sprintf("%v,%v,%v,%v,%v,%v,%v,%v,%v\n",
+	//	MsToTime(s).Format("2006-01-02 15:04:05.999999"), tem.SelectionId, *tem.LastTradedPrice, len(tem.Traded.Prices), *tem.TradedVolume,
+	//	len(tem.AvailableToBack.Prices), cache.MarketDefinition.Status, cache.MarketDefinition.BetDelay,
+	//	cache.MarketDefinition.CrossMatching)
+	//
+	//f, err := os.OpenFile("tempertrap.txt", os.O_APPEND|os.O_WRONLY, 0600)
+	//if err != nil {
+	//	panic(err)
+	//}
+	//defer f.Close()
+	//if _, err = f.WriteString(s_t); err != nil {
+	//	panic(err)
+	//}
 }
 
 func MsToTime(ms string) (time.Time) {
