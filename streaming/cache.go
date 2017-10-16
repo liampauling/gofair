@@ -4,12 +4,12 @@ import (
 	"log"
 	"strconv"
 	"time"
-	//"os"
-	//"fmt"
+	"os"
+	"fmt"
 )
 
 func CreateMarketCache(changeMessage MarketChangeMessage, marketChange MarketChange) *MarketCache {
-	cache := MarketCache{
+	cache := &MarketCache{
 		&changeMessage.PublishTime,
 		marketChange.MarketId,
 		&marketChange.TradedVolume,
@@ -19,7 +19,7 @@ func CreateMarketCache(changeMessage MarketChangeMessage, marketChange MarketCha
 	for _, runnerChange := range marketChange.RunnerChange {
 		cache.Runners[runnerChange.SelectionId] = *CreateRunnerCache(runnerChange)
 	}
-	return &cache
+	return cache
 }
 
 func CreateRunnerCache(change RunnerChange) *RunnerCache {
@@ -115,7 +115,7 @@ func CreateRunnerCache(change RunnerChange) *RunnerCache {
 	}
 	bestDisplayAvailableToLay.Reverse = false
 
-	cache := RunnerCache{
+	cache := &RunnerCache{
 		change.SelectionId,
 		&change.LastTradedPrice,
 		&change.TradedVolume,
@@ -129,7 +129,7 @@ func CreateRunnerCache(change RunnerChange) *RunnerCache {
 		&bestDisplayAvailableToBack,
 		&bestDisplayAvailableToLay,
 	}
-	return &cache
+	return cache
 }
 
 type AvailableInterface interface {
@@ -250,28 +250,6 @@ func (available *Available) Update(updates [][]float64) {
 	}
 }
 
-//func UpdateTwo(available AvailableInterface, updates [][]float64) {
-//	for _, update := range updates {
-//		updated := false
-//		for count, trade := range available.Prices {
-//			if trade.Price == update[0] {
-//				if update[1] == 0 {
-//					available.RemovePrice(count)
-//					updated = true
-//					break
-//				} else {
-//					available.UpdatePrice(count, update)
-//					updated = true
-//					break
-//				}
-//			}
-//		}
-//		if updated == false && update[1] != 0 {
-//			available.AppendPrice(update)
-//		}
-//	}
-//}
-
 type RunnerCache struct {
 	SelectionId     int64
 	LastTradedPrice *float64
@@ -304,7 +282,6 @@ func (cache *RunnerCache) UpdateCache(change RunnerChange) {
 	//}
 	if len(change.Traded) > 0 {
 		cache.Traded.Update(change.Traded)
-		//UpdateTwo(cache.Traded)
 	}
 	if len(change.AvailableToBack) > 0 {
 		cache.AvailableToBack.Update(change.AvailableToBack)
@@ -320,7 +297,6 @@ func (cache *RunnerCache) UpdateCache(change RunnerChange) {
 	}
 	if len(change.BestAvailableToBack) > 0 {
 		cache.BestAvailableToBack.Update(change.BestAvailableToBack)
-		//UpdateTwo(cache.BestAvailableToBack)
 	}
 	if len(change.BestAvailableToLay) > 0 {
 		cache.BestAvailableToLay.Update(change.BestAvailableToLay)
@@ -359,21 +335,21 @@ func (cache *MarketCache) UpdateCache(changeMessage MarketChangeMessage, marketC
 			}
 		}
 	}
-	//tem, _ := cache.Runners[12943079]
-	//s := strconv.Itoa(*cache.PublishTime)
-	//s_t := fmt.Sprintf("%v,%v,%v,%v,%v,%v,%v,%v,%v\n",
-	//	MsToTime(s).Format("2006-01-02 15:04:05.999999"), tem.SelectionId, *tem.LastTradedPrice, len(tem.Traded.Prices), *tem.TradedVolume,
-	//	len(tem.AvailableToBack.Prices), cache.MarketDefinition.Status, cache.MarketDefinition.BetDelay,
-	//	cache.MarketDefinition.CrossMatching)
-	//
-	//f, err := os.OpenFile("tempertrap.txt", os.O_APPEND|os.O_WRONLY, 0600)
-	//if err != nil {
-	//	panic(err)
-	//}
-	//defer f.Close()
-	//if _, err = f.WriteString(s_t); err != nil {
-	//	panic(err)
-	//}
+
+	f, err := os.OpenFile("tempertrap.txt", os.O_APPEND|os.O_WRONLY, 0600)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+	for _, tem := range cache.Runners {
+		s := strconv.Itoa(*cache.PublishTime)
+		s_t := fmt.Sprintf("%v,%v,%v,%v,%v,%v,%v,%v,%v,%v\n",
+			MsToTime(s).Format("2006-01-02 15:04:05.999999"), cache.MarketId, tem.SelectionId,
+			*tem.LastTradedPrice, *tem.TradedVolume, cache.MarketDefinition.InPlay, *cache.TradedVolume)
+		if _, err = f.WriteString(s_t); err != nil {
+			panic(err)
+		}
+	}
 }
 
 func MsToTime(ms string) (time.Time) {

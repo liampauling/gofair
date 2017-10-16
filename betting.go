@@ -8,8 +8,8 @@ type eventType struct {
 }
 
 type eventTypeResult struct {
-	MarketCount int        `json:"marketCount"`
-	EventType   eventType  `json:"eventType"`
+	MarketCount int       `json:"marketCount"`
+	EventType   eventType `json:"eventType"`
 }
 
 type competition struct {
@@ -18,9 +18,9 @@ type competition struct {
 }
 
 type competitionResult struct {
-	MarketCount       int          `json:"marketCount"`
-	CompetitionRegion string       `json:"competitionRegion"`
-	Competition       competition  `json:"competition"`
+	MarketCount       int         `json:"marketCount"`
+	CompetitionRegion string      `json:"competitionRegion"`
+	Competition       competition `json:"competition"`
 }
 
 type timeRange struct {
@@ -29,8 +29,8 @@ type timeRange struct {
 }
 
 type timeRangeResult struct {
-	MarketCount int        `json:"marketCount"`
-	TimeRange   timeRange  `json:"timeRange"`
+	MarketCount int       `json:"marketCount"`
+	TimeRange   timeRange `json:"timeRange"`
 }
 
 type event struct {
@@ -43,8 +43,8 @@ type event struct {
 }
 
 type eventResult struct {
-	MarketCount int    `json:"marketCount"`
-	Event       event  `json:"event"`
+	MarketCount int   `json:"marketCount"`
+	Event       event `json:"event"`
 }
 
 type marketTypeResult struct {
@@ -93,15 +93,15 @@ type runnerCatalogue struct {
 }
 
 type marketCatalogue struct {
-	MarketId                   string                      `json:"marketId"`
-	MarketName                 string                      `json:"marketName"`
-	TotalMatched               float32                     `json:"totalMatched"`
-	MarketStartTime            time.Time                   `json:"marketStartTime"`
-	Competition                competition                 `json:"competition"`
-	Event                      event                       `json:"event"`
-	EventType                  eventType                   `json:"eventType"`
-	MarketCatalogueDescription marketCatalogueDescription  `json:"description"`
-	Runners                    []runnerCatalogue           `json:"runners"`
+	MarketId                   string                     `json:"marketId"`
+	MarketName                 string                     `json:"marketName"`
+	TotalMatched               float32                    `json:"totalMatched"`
+	MarketStartTime            time.Time                  `json:"marketStartTime"`
+	Competition                competition                `json:"competition"`
+	Event                      event                      `json:"event"`
+	EventType                  eventType                  `json:"eventType"`
+	MarketCatalogueDescription marketCatalogueDescription `json:"description"`
+	Runners                    []runnerCatalogue          `json:"runners"`
 }
 
 func (b *Betting) ListEventTypes(filter MarketFilter) ([]eventTypeResult, error) {

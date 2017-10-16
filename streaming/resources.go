@@ -25,7 +25,7 @@ type MarketDefinition struct {
 	BetDelay              int32               `json:"betDelay"`
 	BspMarket             bool                `json:"bspMarket"`
 	BettingType           string              `json:"bettingType"`
-	NumberOfActiveRunners int32               `json:"status"`
+	NumberOfActiveRunners int32               `json:"numberOfActiveRunners"`
 	LineMinUnit           float64             `json:"lineMinUnit"`
 	EventId               string              `json:"eventId"`
 	CrossMatching         bool                `json:"crossMatching"`
@@ -45,11 +45,12 @@ type MarketDefinition struct {
 	Status                string              `json:"status"`
 	PriceLadderDescription           string              `json:"priceLadderDescription"`
 	KeyLineDefinition                string              `json:"keyLineDefinition"`
+	Name				string  `json:"name"`
 }
 
 type RunnerChange struct {
 	SelectionId     int64       `json:"id"`
-	Handicap        *float64    `json:"hc"`
+	Handicap        float64    `json:"hc"`
 	TradedVolume    float64     `json:"tv"`
 	LastTradedPrice float64     `json:"ltp"`
 	Traded          [][]float64 `json:"trd"`
