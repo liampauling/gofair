@@ -2,10 +2,6 @@ package streaming
 
 import (
 	"log"
-	"strconv"
-	"time"
-	"os"
-	"fmt"
 )
 
 func CreateMarketCache(changeMessage MarketChangeMessage, marketChange MarketChange) *MarketCache {
@@ -335,28 +331,11 @@ func (cache *MarketCache) UpdateCache(changeMessage MarketChangeMessage, marketC
 			}
 		}
 	}
-
-	f, err := os.OpenFile("tempertrap.txt", os.O_APPEND|os.O_WRONLY, 0600)
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-	for _, tem := range cache.Runners {
-		s := strconv.Itoa(*cache.PublishTime)
-		s_t := fmt.Sprintf("%v,%v,%v,%v,%v,%v,%v,%v,%v,%v\n",
-			MsToTime(s).Format("2006-01-02 15:04:05.999999"), cache.MarketId, tem.SelectionId,
-			*tem.LastTradedPrice, *tem.TradedVolume, cache.MarketDefinition.InPlay, *cache.TradedVolume)
-		if _, err = f.WriteString(s_t); err != nil {
-			panic(err)
-		}
-	}
 }
 
-func MsToTime(ms string) (time.Time) {
-	msInt, err := strconv.ParseInt(ms, 10, 64)
-	if err != nil {
-		return time.Time{}
+func (cache *MarketCache) Snap() MarketBook {
+	return MarketBook{
+		MarketId:	cache.MarketId,
+		TradedVolume:	*cache.TradedVolume,
 	}
-
-	return time.Unix(0, msInt*int64(time.Millisecond))
 }

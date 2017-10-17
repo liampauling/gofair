@@ -31,5 +31,10 @@ func (h *Historical) ParseHistoricalData(directory string, listener streaming.Li
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+	log.Println("Reading complete")
+
+	// close channel
+	close(listener.OutputChannel)
+
 	return nil
 }

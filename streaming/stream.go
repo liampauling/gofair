@@ -10,7 +10,8 @@ type Stream interface {
 }
 
 type MarketStream struct {
-	Cache map[string]MarketCache
+	OutputChannel	chan MarketBook
+	Cache	map[string]MarketCache
 }
 
 func (ms *MarketStream) OnSubscribe(changeMessage MarketChangeMessage) {
@@ -32,10 +33,11 @@ func (ms *MarketStream) OnUpdate(changeMessage MarketChangeMessage) {
 
 		if marketCache, ok := ms.Cache[marketChange.MarketId]; ok {
 			marketCache.UpdateCache(changeMessage, marketChange)
+			ms.OutputChannel<-marketCache.Snap()
 		} else {
 			ms.Cache[marketChange.MarketId] = *CreateMarketCache(changeMessage, marketChange)
 			log.Println("Created new market cache", marketChange.MarketId)
+			//todo snap here
 		}
 	}
-	// todo output snap
 }

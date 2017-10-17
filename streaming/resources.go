@@ -87,3 +87,8 @@ type MarketChangeMessage struct {
 	SegmentType   string         `json:"segmentType"`
 	Status        int32          `json:"status"`
 }
+
+type MarketBook struct {
+	MarketId         string
+	TradedVolume     float64
+}

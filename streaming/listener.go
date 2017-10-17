@@ -4,10 +4,12 @@ type Listener struct {
 	MarketStream *MarketStream
 	OrderStream  Stream
 	UniqueId     int64
+	OutputChannel	chan MarketBook  //todo change to interface so that OrderBook can be accepted
 }
 
 func (l *Listener) AddMarketStream() {
 	l.MarketStream = new(MarketStream)
+	l.MarketStream.OutputChannel = l.OutputChannel
 	l.MarketStream.Cache = make(map[string]MarketCache)
 }
 
