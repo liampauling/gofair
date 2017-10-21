@@ -306,7 +306,7 @@ func (cache *RunnerCache) UpdateCache(change RunnerChange) {
 }
 
 type MarketCache struct {
-	PublishTime      *int
+	PublishTime      *int64
 	MarketId         string
 	TradedVolume     *float64
 	MarketDefinition *MarketDefinition
@@ -333,9 +333,63 @@ func (cache *MarketCache) UpdateCache(changeMessage MarketChangeMessage, marketC
 	}
 }
 
+func (cache *MarketCache) GetRunnerDefinition(selectionId int64) RunnerDefinition {
+	for i := range cache.MarketDefinition.Runners {
+		if cache.MarketDefinition.Runners[i].SelectionId == selectionId {
+			return cache.MarketDefinition.Runners[i]
+		}
+	}
+	return RunnerDefinition{}
+}
+
+func (cache *RunnerCache) Snap(definition RunnerDefinition) Runner {
+
+	// todo
+	availableToBack := []PriceSize{}
+	availableToLay := []PriceSize{}
+	tradedVolume := []PriceSize{}
+
+	exchangePrices := ExchangePrices{
+		AvailableToBack: availableToBack,
+		AvailableToLay: availableToLay,
+		TradedVolume: tradedVolume,
+	}
+
+	return Runner{
+		SelectionID: cache.SelectionId,
+		Handicap: definition.Handicap,
+		Status: definition.Status,
+		AdjustmentFactor: definition.AdjustmentFactor,
+		LastPriceTraded: *cache.LastTradedPrice,
+		TotalMatched: *cache.TradedVolume,
+		RemovalDate: definition.RemovalDate,
+		EX: exchangePrices,
+	}
+}
+
 func (cache *MarketCache) Snap() MarketBook {
+	runners := []Runner{}
+
+	for _, runner := range cache.Runners {
+		runnerDefinition := cache.GetRunnerDefinition(runner.SelectionId)
+		runners = append(runners, runner.Snap(runnerDefinition))
+	}
+
 	return MarketBook{
+		PublishTime: *cache.PublishTime,
 		MarketId:	cache.MarketId,
-		TradedVolume:	*cache.TradedVolume,
+		Status: cache.MarketDefinition.Status,
+		BetDelay: cache.MarketDefinition.BetDelay,
+		BspReconciled: cache.MarketDefinition.BspReconciled,
+		Complete: cache.MarketDefinition.Complete,
+		Inplay: cache.MarketDefinition.Inplay,
+		NumberOfWinners: cache.MarketDefinition.NumberOfWinners,
+		NumberOfRunners: len(cache.Runners),
+		NumberOfActiveRunners: cache.MarketDefinition.NumberOfActiveRunners,
+		TotalMatched: *cache.TradedVolume,
+		CrossMatching: cache.MarketDefinition.CrossMatching,
+		RunnersVoidable: cache.MarketDefinition.RunnersVoidable,
+		Version: cache.MarketDefinition.Version,
+		Runners: runners,
 	}
 }

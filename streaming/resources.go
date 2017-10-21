@@ -1,8 +1,10 @@
 package streaming
 
+import "time"
+
 type RunnerDefinition struct {
 	SortPriority     int32   `json:"sortPriority"`
-	RemovalDate      string  `json:"removalDate"`
+	RemovalDate      time.Time  `json:"removalDate"`
 	SelectionId      int64   `json:"id"`
 	Handicap         float64 `json:"hc"`
 	AdjustmentFactor float64 `json:"adjustmentFactor"`
@@ -21,7 +23,7 @@ type MarketDefinition struct {
 	NumberOfWinners       int32               `json:"numberOfWinners"`
 	CountryCode           string              `json:"countryCode"`
 	LineMaxUnit           float64             `json:"lineMaxUnit"`
-	InPlay                bool                `json:"inPlay"`
+	Inplay                bool                `json:"inPlay"`
 	BetDelay              int32               `json:"betDelay"`
 	BspMarket             bool                `json:"bspMarket"`
 	BettingType           string              `json:"bettingType"`
@@ -44,8 +46,8 @@ type MarketDefinition struct {
 	LineInterval          float64             `json:"lineInterval"`
 	Status                string              `json:"status"`
 	PriceLadderDescription           string              `json:"priceLadderDescription"`
-	KeyLineDefinition                string              `json:"keyLineDefinition"`
-	Name				string  `json:"name"`
+	KeyLineDefinition     string              `json:"keyLineDefinition"`
+	Name				  string              `json:"name"`
 }
 
 type RunnerChange struct {
@@ -77,7 +79,7 @@ type MarketChange struct {
 
 type MarketChangeMessage struct {
 	MarketChanges []MarketChange `json:"mc"`
-	PublishTime   int            `json:"pt"`
+	PublishTime   int64          `json:"pt"`
 	Operation     string         `json:"op"`
 	ChangeType    string         `json:"ct"`
 	InitialClk    string         `json:"initialClk"`
@@ -89,6 +91,36 @@ type MarketChangeMessage struct {
 }
 
 type MarketBook struct {
-	MarketId         string
-	TradedVolume     float64
+	PublishTime 		  int64
+	MarketId         	  string
+	Status                string
+	BetDelay              int32
+	BspReconciled         bool
+	Complete              bool
+	Inplay                bool
+	NumberOfWinners       int32
+	NumberOfRunners       int
+	NumberOfActiveRunners int32
+	TotalMatched          float64
+	CrossMatching         bool
+	RunnersVoidable       bool
+	Version               int64
+	Runners               []Runner
+}
+
+type Runner struct {
+	SelectionID       int64
+	Handicap          float64
+	Status            string
+	AdjustmentFactor  float64
+	LastPriceTraded   float64
+	TotalMatched      float64
+	RemovalDate       time.Time
+	EX                ExchangePrices
+}
+
+type ExchangePrices struct {
+	AvailableToBack []PriceSize
+	AvailableToLay  []PriceSize
+	TradedVolume    []PriceSize
 }

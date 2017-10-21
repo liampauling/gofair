@@ -1,6 +1,8 @@
 package streaming
 
-import "log"
+import (
+	"log"
+)
 
 type Stream interface {
 	OnSubscribe(ChangeMessage MarketChangeMessage)
@@ -35,9 +37,11 @@ func (ms *MarketStream) OnUpdate(changeMessage MarketChangeMessage) {
 			marketCache.UpdateCache(changeMessage, marketChange)
 			ms.OutputChannel<-marketCache.Snap()
 		} else {
-			ms.Cache[marketChange.MarketId] = *CreateMarketCache(changeMessage, marketChange)
+			marketCache := CreateMarketCache(changeMessage, marketChange)
+			ms.Cache[marketChange.MarketId] = *marketCache
+			ms.OutputChannel<-marketCache.Snap()
+
 			log.Println("Created new market cache", marketChange.MarketId)
-			//todo snap here
 		}
 	}
 }
