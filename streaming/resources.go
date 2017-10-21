@@ -79,7 +79,7 @@ type MarketChange struct {
 
 type MarketChangeMessage struct {
 	MarketChanges []MarketChange `json:"mc"`
-	PublishTime   int64          `json:"pt"`
+	PublishTime   int          `json:"pt"`
 	Operation     string         `json:"op"`
 	ChangeType    string         `json:"ct"`
 	InitialClk    string         `json:"initialClk"`
@@ -91,7 +91,7 @@ type MarketChangeMessage struct {
 }
 
 type MarketBook struct {
-	PublishTime 		  int64
+	PublishTime 		  int
 	MarketId         	  string
 	Status                string
 	BetDelay              int32
@@ -109,7 +109,7 @@ type MarketBook struct {
 }
 
 type Runner struct {
-	SelectionID       int64
+	SelectionId       int64
 	Handicap          float64
 	Status            string
 	AdjustmentFactor  float64

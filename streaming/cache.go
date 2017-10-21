@@ -306,7 +306,7 @@ func (cache *RunnerCache) UpdateCache(change RunnerChange) {
 }
 
 type MarketCache struct {
-	PublishTime      *int64
+	PublishTime      *int
 	MarketId         string
 	TradedVolume     *float64
 	MarketDefinition *MarketDefinition
@@ -356,7 +356,7 @@ func (cache *RunnerCache) Snap(definition RunnerDefinition) Runner {
 	}
 
 	return Runner{
-		SelectionID: cache.SelectionId,
+		SelectionId: cache.SelectionId,
 		Handicap: definition.Handicap,
 		Status: definition.Status,
 		AdjustmentFactor: definition.AdjustmentFactor,
