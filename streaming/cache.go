@@ -2,6 +2,7 @@ package streaming
 
 import (
 	"log"
+	"sort"
 )
 
 func CreateMarketCache(changeMessage MarketChangeMessage, marketChange MarketChange) *MarketCache {
@@ -142,11 +143,25 @@ type PriceSize struct {
 	Size  float64
 }
 
+// sort.Interface for []PriceSize based on price
+type ByPrice []PriceSize
+
+func (a ByPrice) Len() int			{ return len(a) }
+func (a ByPrice) Swap(i, j int)		{ a[i], a[j] = a[j], a[i] }
+func (a ByPrice) Less(i, j int) bool { return a[i].Price < a[j].Price }
+
 type PositionPriceSize struct {
 	Position float64
 	Price    float64
 	Size     float64
 }
+
+// sort.Interface for []PositionPriceSize based on position
+type ByPosition []PositionPriceSize
+
+func (a ByPosition) Len() int			{ return len(a) }
+func (a ByPosition) Swap(i, j int)		{ a[i], a[j] = a[j], a[i] }
+func (a ByPosition) Less(i, j int) bool { return a[i].Position < a[j].Position }
 
 type AvailablePosition struct {
 	Prices  []PositionPriceSize
@@ -158,7 +173,11 @@ func (available *AvailablePosition) Clear() {
 }
 
 func (available *AvailablePosition) Sort() {
-	// todo
+	if available.Reverse {
+		sort.Sort(sort.Reverse(ByPosition(available.Prices)))
+	} else {
+		sort.Sort(ByPosition(available.Prices))
+	}
 }
 
 func (available *AvailablePosition) UpdatePrice(count int, update []float64) {
@@ -195,6 +214,7 @@ func (available *AvailablePosition) Update(updates [][]float64) {
 			available.AppendPrice(update)
 		}
 	}
+	available.Sort()
 }
 
 type Available struct {
@@ -207,7 +227,11 @@ func (available *Available) Clear() {
 }
 
 func (available *Available) Sort() {
-	// todo
+	if available.Reverse {
+		sort.Sort(sort.Reverse(ByPrice(available.Prices)))
+	} else {
+		sort.Sort(ByPrice(available.Prices))
+	}
 }
 
 func (available *Available) UpdatePrice(count int, update []float64) {
@@ -244,6 +268,7 @@ func (available *Available) Update(updates [][]float64) {
 			available.AppendPrice(update)
 		}
 	}
+	available.Sort()
 }
 
 type RunnerCache struct {
@@ -342,19 +367,14 @@ func (cache *MarketCache) GetRunnerDefinition(selectionId int64) RunnerDefinitio
 	return RunnerDefinition{}
 }
 
+// snap functions
+
 func (cache *RunnerCache) Snap(definition RunnerDefinition) Runner {
-
-	// todo
-	availableToBack := []PriceSize{}
-	availableToLay := []PriceSize{}
-	tradedVolume := []PriceSize{}
-
 	exchangePrices := ExchangePrices{
-		AvailableToBack: availableToBack,
-		AvailableToLay: availableToLay,
-		TradedVolume: tradedVolume,
+		AvailableToBack: cache.AvailableToBack.Prices,
+		AvailableToLay: cache.AvailableToLay.Prices,
+		TradedVolume: cache.Traded.Prices,
 	}
-
 	return Runner{
 		SelectionId: cache.SelectionId,
 		Handicap: definition.Handicap,
@@ -374,7 +394,6 @@ func (cache *MarketCache) Snap() MarketBook {
 		runnerDefinition := cache.GetRunnerDefinition(runner.SelectionId)
 		runners = append(runners, runner.Snap(runnerDefinition))
 	}
-
 	return MarketBook{
 		PublishTime: *cache.PublishTime,
 		MarketId:	cache.MarketId,
