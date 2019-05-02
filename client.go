@@ -68,16 +68,17 @@ func NewClient(config *Config) (*Client, error) {
 
 	// create session
 	c.session = new(session)
-
+	var cert tls.Certificate
+	var err error
 	// create certificates
 	// ----- is obviously not a path, therefore load direct from the variables
-	if strings.HasPrefix(config.CertFile,"------") {
-		cert, err := tsl.X509KeyPair(config.CertFile, config.KeyFile)
+	if strings.HasPrefix(config.CertFile, "------") {
+		cert, err = tls.X509KeyPair([]byte(config.CertFile), []byte(config.KeyFile))
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		cert, err := tls.LoadX509KeyPair(config.CertFile, config.KeyFile)
+		cert, err = tls.LoadX509KeyPair(config.CertFile, config.KeyFile)
 		if err != nil {
 			return nil, err
 		}
