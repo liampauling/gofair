@@ -3,6 +3,7 @@ package gofair
 import (
 	"crypto/tls"
 	"time"
+	"strings"
 )
 
 // betfair api endpoints
@@ -67,11 +68,20 @@ func NewClient(config *Config) (*Client, error) {
 
 	// create session
 	c.session = new(session)
-
+	var cert tls.Certificate
+	var err error
 	// create certificates
-	cert, err := tls.LoadX509KeyPair(config.CertFile, config.KeyFile)
-	if err != nil {
-		return nil, err
+	// ----- is obviously not a path, therefore load direct from the variables
+	if strings.HasPrefix(config.CertFile, "------") {
+		cert, err = tls.X509KeyPair([]byte(config.CertFile), []byte(config.KeyFile))
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		cert, err = tls.LoadX509KeyPair(config.CertFile, config.KeyFile)
+		if err != nil {
+			return nil, err
+		}
 	}
 	c.certificates = &cert
 
